@@ -1,35 +1,13 @@
 ---
-- name: Deploy application
-  hosts: all
-  gather_facts: false
+- name: Clone application repository
+  git:
+    repo: "{{ app_repo }}"
+    dest: /tmp
+    version: "{{ git_tag }}"
+  register: clone_result
 
-  tasks:
-    - name: Determine deployment environment
-      set_fact:
-        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
+- name: Display clone result
+  debug:
+    var: clone_result
 
-    - name: Display deployment environment
-      debug:
-        var: deployment_environment
-
-- name: Clone application repository and deploy
-  hosts: "{{ deployment_environment }}"
-  gather_facts: false
-  become: yes
-
-  roles:
-    - ansible-tagedeployment
-
-  tasks:
-    - name: Clone application repository
-      git:
-        repo: "{{ app_repo }}"
-        dest: /tmp
-        version: "{{ git_tag }}"
-      register: clone_result
-
-    - name: Display clone result
-      debug:
-        var: clone_result
-
-    # Additional deployment tasks for your application
+# Additional deployment tasks for your application
