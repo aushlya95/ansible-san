@@ -1,20 +1,19 @@
 ---
 - name: Get Git Tags
   git:
-    repo: https://github.com/aushlya95/alpha.lambdax.san.git
+    repo: "{{ app_repo }}"
     clone: no
   register: git_tags
 
 - name: Determine Tag
   set_fact:
     selected_tag: "{{ item }}"
-  with_items: "{{ git_tags.tagged | map(attribute='name') | list }}"
+  with_items: "{{ git_tags.stdout_lines | map('split', '/') | map('last') | list }}"
   when: item.endswith('-alpha') or item.endswith('-playground')
 
 - name: Copy File Based on Tag
   copy:
     src: "/tmp/{{ selected_tag }}"
     dest: "/tmp/{{ selected_tag }}"
-  delegate_to: "{{ item }}"
-  with_lines: cat hosts.ini
+  delegate_to: "{{ inventory_hostname }}"
   when: selected_tag is defined
