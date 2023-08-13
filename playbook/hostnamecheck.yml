@@ -2,12 +2,3 @@
 - hosts: all
   roles:
     - ansible-pingtest
-
-  tasks:
-    - name: Get the hostname of the servers
-      command: hostname
-      register: hostname_register
-
-    - name: Display Hostname
-      debug:
-        var: hostname_register.stdout
