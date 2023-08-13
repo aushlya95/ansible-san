@@ -3,7 +3,7 @@
   gather_facts: false
   tasks:
     - name: Get hostname
-      shell: hostname
+      command: hostname
       register: hostname_result
 
     - name: Display hostname
