@@ -1,6 +1,18 @@
 ---
 - name: Deploy application
-  hosts: all # or test, stage, prod  
+  hosts: all
+  gather_facts: false
 
+  tasks:
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
+
+    - name: Display deployment environment
+      debug:
+        var: deployment_environment
+
+- name: Run the ansible-tag-deployment role
+  hosts: "{{ deployment_environment }}"
   roles:
     - ansible-tag-deployment
