@@ -1,7 +1,0 @@
-- hosts: "{{ hosts_to_run }}"
-  vars_files:
-    - environments/default.yml
-#    - environments/{{ env }}.yml
-#    - data/{{ env }}/{{ env }}.yml
-  roles:
-    - "{{ role }}"
