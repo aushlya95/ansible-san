@@ -2,26 +2,11 @@
 - name: Deploy application
   hosts: all
   gather_facts: false
-  vars_prompt:
-    - name: git_tag
-      prompt: "Enter the Git tag to deploy"
-      private: no
-      default: ""
-    - name: app_repo
-      prompt: "Enter the application repository URL"
-      private: no
-      default: "https://github.com/aushlya95/alpha.lambdax.san.git"
 
   tasks:
     - name: Determine deployment environment
       set_fact:
-        deployment_environment: "dev"
-      when: git_tag.endswith('-alpha')
-
-    - name: Determine deployment environment
-      set_fact:
-        deployment_environment: "stage"
-      when: git_tag.endswith('-playground')
+        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
 
     - name: Display deployment environment
       debug:
@@ -29,10 +14,12 @@
 
 - name: Clone application repository and deploy
   hosts: "{{ deployment_environment }}"
+  gather_facts: false
   become: yes
 
   roles:
-    - ansible-tag-deployment
+    - ansible-tagedeployment
+
   tasks:
     - name: Clone application repository
       git:
