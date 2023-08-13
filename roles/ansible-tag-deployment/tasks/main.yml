@@ -1,4 +1,5 @@
 ---
+- name: Deploy application
   hosts: localhost
   gather_facts: false
   vars_prompt:
@@ -16,6 +17,10 @@
       set_fact:
         deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
 
+    - name: Display deployment environment
+      debug:
+        var: deployment_environment
+
     - name: Get server hostname based on deployment environment
       set_fact:
         server_hostname: "{{ hostvars[deployment_environment]['ansible_host'] }}"
@@ -23,6 +28,18 @@
     - name: Display server hostname
       debug:
         var: server_hostname
+
+    - name: Debug information
+      debug:
+        msg: "Hostname task is about to be executed."
+
+    - name: Get hostname
+      command: hostname
+      register: hostname_result
+
+    - name: Display hostname
+      debug:
+        var: hostname_result.stdout
 
 - name: Clone application repository and deploy
   hosts: "{{ server_hostname }}"
