@@ -1,11 +1,11 @@
----
-- hosts: all
-  gather_facts: false
-  tasks:
-    - name: Get hostname
-      command: hostname
-      register: hostname_result
+- name: Debug information
+  debug:
+    msg: "Hostname task is about to be executed."
 
-    - name: Display hostname
-      debug:
-        var: hostname_result.stdout
+- name: Get hostname
+  command: hostname
+  register: hostname_result
+
+- name: Display hostname
+  debug:
+    var: hostname_result.stdout
