@@ -1,6 +1,6 @@
 ---
 - name: Deploy application
-  hosts: localhost
+  hosts: all
   gather_facts: false
   vars_prompt:
     - name: git_tag
