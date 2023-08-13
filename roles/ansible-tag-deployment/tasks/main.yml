@@ -1,41 +1,11 @@
----
-- name: Deploy application
-  hosts: localhost  # Use localhost as there's no specific target needed for this task
-  gather_facts: false
+- name: Debug information
+  debug:
+    msg: "Hostname task is about to be executed."
 
-  tasks:
-    - name: Determine deployment environment
-      set_fact:
-        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
+- name: Get hostname
+  command: hostname
+  register: hostname_result
 
-    - name: Display deployment environment
-      debug:
-        var: deployment_environment
-
-    - name: Get server hostname based on deployment environment
-      set_fact:
-        server_hostname: >-
-          {{ 'alpha-host1' if deployment_environment == 'alpha' else 'playground-host-1' }}
-    
-    - name: Display server hostname
-      debug:
-        var: server_hostname
-
-- name: Clone application repository and deploy
-  hosts: "{{ server_hostname }}"
-  gather_facts: false
-  become: yes
-
-  tasks:
-    - name: Clone application repository
-      git:
-        repo: "{{ app_repo }}"   # Use the application repository URL
-        dest: /tmp/app_repo      # Specify the destination directory
-        version: "{{ git_tag }}" # Use the Git tag value
-      register: clone_result
-
-    - name: Display clone result
-      debug:
-        var: clone_result
-
-    # Additional deployment tasks for your application
+- name: Display hostname
+  debug:
+    var: hostname_result.stdout
