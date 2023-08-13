@@ -3,5 +3,5 @@
   hosts: all # or test, stage, prod  
 
   roles:
-    - ansible-tag-deployment
+    - ansible-pingtest
     
