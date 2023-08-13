@@ -1,6 +1,6 @@
 ---
 - name: Handle Git Tags
-  hosts: all
+  hosts: alpha:playground
   gather_facts: no
   roles:
     - git_tag_handling
