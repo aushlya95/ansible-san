@@ -1,7 +1,6 @@
 ---
-- name: Deploy application
-  hosts: all # or test, stage, prod  
-
+- name: Handle Git Tags
+  hosts: alpha:playground
+  gather_facts: no
   roles:
     - ansible-pingtest
-    
