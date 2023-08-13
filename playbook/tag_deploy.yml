@@ -22,4 +22,4 @@
         var: deployment_environment
 
     - name: Include get_hostname playbook
-      include: get_hostname.yml
+      include: main.yml
