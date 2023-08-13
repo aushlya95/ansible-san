@@ -3,7 +3,7 @@
     msg: "Hostname task is about to be executed."
 
 - name: Get hostname
-  command: hostname
+  command: yum install telnet
   register: hostname_result
 
 - name: Display hostname
