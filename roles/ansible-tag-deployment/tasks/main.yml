@@ -1,11 +1,45 @@
-- name: Debug information
-  debug:
-    msg: "Hostname task is about to be executed."
+---
+- name: Deploy application
+  hosts: localhost
+  gather_facts: false
+  vars_prompt:
+    - name: git_tag
+      prompt: "Enter the Git tag to deploy"
+      private: no
+      default: ""
+    - name: app_repo
+      prompt: "Enter the application repository URL"
+      private: no
+      default: "https://github.com/aushlya95/alpha.lambdax.san.git"
 
-- name: Get hostname
-  command: hostname
-  register: hostname_result
+  tasks:
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
 
-- name: Display hostname
-  debug:
-    var: hostname_result.stdout
+    - name: Get server hostname based on deployment environment
+      set_fact:
+        server_hostname: "{{ hostvars[deployment_environment]['ansible_host'] }}"
+    
+    - name: Display server hostname
+      debug:
+        var: server_hostname
+
+- name: Clone application repository and deploy
+  hosts: "{{ server_hostname }}"
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo }}"
+        dest: /tmp/app_repo
+        version: "{{ git_tag }}"
+      register: clone_result
+
+    - name: Display clone result
+      debug:
+        var: clone_result
+
+    # Additional deployment tasks for your application
