@@ -8,8 +8,8 @@
 - name: Determine Tag
   set_fact:
     selected_tag: "{{ item }}"
-  with_items: "{{ git_tags.stdout_lines | map('split', '/') | map('last') | list }}"
-  when: item.endswith('-alpha') or item.endswith('-playground')
+  with_items: "{{ git_tags.stdout_lines }}"
+  when: selected_tag is not defined and (item.endswith('-alpha') or item.endswith('-playground'))
 
 - name: Copy File Based on Tag
   copy:
