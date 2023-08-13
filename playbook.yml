@@ -1,7 +1,7 @@
 ---
 - name: Deploy application
-  hosts: stage  # or test, stage, prod  
+  hosts: all # or test, stage, prod  
 
   roles:
-    - ansible-pingtest
+    - ansible-tag-deployment
     
