@@ -1,7 +1,4 @@
 ---
-- name: Get Hostname
-  hosts: all # Specify your target hosts here
-  become: yes
   tasks:
     - name: Get the hostname of the servers
       command: hostname
