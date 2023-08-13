@@ -1,5 +1,5 @@
 ---
-- name: Get Hostname
+- name: hostname checker
   hosts: alpha:playground  # Specify your target hosts here
   gather_facts: yes
   tasks:
@@ -7,6 +7,4 @@
       command: hostname
       register: hostname_result
 
-    - name: Display Hostname
-      debug:
-        var: hostname_result.stdout
+
