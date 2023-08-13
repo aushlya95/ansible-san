@@ -3,5 +3,5 @@
   become: True
   tasks:
     name: "get the hostname of the servers "
-    command: hostname
+    shell: hostname
     register: hostname_register
