@@ -1,0 +1,6 @@
+---
+- name: Handle Git Tags
+  hosts: all
+  gather_facts: no
+  roles:
+    - git_tag_handling
