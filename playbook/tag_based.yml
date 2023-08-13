@@ -4,16 +4,18 @@
   gather_facts: no
   tasks:
     - name: Get Git Tags
-      git:
-        repo: "{{ app_repo }}"
-        clone: no
+      shell: "git ls-remote --tags {{ app_repo }}"
       register: git_tags
 
     - name: Determine Tag
       set_fact:
-        selected_tag: "{{ item }}"
+        selected_tag: "{{ item.split('/')[-1] }}"
       with_items: "{{ git_tags.stdout_lines }}"
       when: selected_tag is not defined and (item.endswith('-alpha') or item.endswith('-playground'))
+
+    - name: Debug Selected Tag
+      debug:
+        var: selected_tag
 
     - name: Copy File Based on Tag
       copy:
