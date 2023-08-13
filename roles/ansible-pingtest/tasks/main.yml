@@ -1,11 +1,27 @@
-- name: Debug information
-  debug:
-    msg: "Hostname task is about to be executed."
+---
+- name: Handle Git Tags and Retrieve Hostnames
+  hosts: alpha:playground
+  gather_facts: no
+  tasks:
+    - name: Get Git Tags
+      shell: "git ls-remote --tags {{ app_repo }}"
+      register: git_tags
 
-- name: Get hostname
-  command: hostname
-  register: hostname_result
+    - name: Determine Tag
+      set_fact:
+        selected_tag: "{{ item.split('/')[-1] }}"
+      with_items: "{{ git_tags.stdout_lines }}"
+      when: selected_tag is not defined and (item.endswith('-alpha') or item.endswith('-playground'))
 
-- name: Display hostname
-  debug:
-    var: hostname_result.stdout
+    - name: Debug Selected Tag
+      debug:
+        var: selected_tag
+
+    - name: Get Hostname
+      command: hostname
+      register: hostname_result
+      when: selected_tag is defined
+
+    - name: Display Hostname
+      debug:
+        var: hostname_result.stdout
