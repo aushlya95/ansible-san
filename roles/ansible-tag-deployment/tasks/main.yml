@@ -20,9 +20,9 @@
   tasks:
     - name: Clone application repository
       git:
-        repo: "{{ app_repo }}"  # Use the application repository URL
-        dest: /tmp/app_repo     # Specify the destination directory
-        version: "{{ git_tag }}"
+        repo: "{{ app_repo }}"   # Use the application repository URL
+        dest: /tmp/app_repo      # Specify the destination directory
+        version: "{{ git_tag }}" # Use the Git tag value
       register: clone_result
 
     - name: Display clone result
