@@ -1,6 +1,6 @@
 ---
 - name: Deploy application
-  hosts: all
+  hosts: localhost  # Use localhost as there's no specific target needed for this task
   gather_facts: false
 
   tasks:
@@ -12,8 +12,17 @@
       debug:
         var: deployment_environment
 
+    - name: Get server hostname based on deployment environment
+      set_fact:
+        server_hostname: >-
+          {{ 'alpha-host1' if deployment_environment == 'alpha' else 'playground-host-1' }}
+    
+    - name: Display server hostname
+      debug:
+        var: server_hostname
+
 - name: Clone application repository and deploy
-  hosts: "{{ deployment_environment }}"
+  hosts: "{{ server_hostname }}"
   gather_facts: false
   become: yes
 
