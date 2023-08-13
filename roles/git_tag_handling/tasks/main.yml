@@ -1,7 +1,7 @@
 ---
 - name: Get Git Tags
   git:
-    repo: /path/to/your/git/repo
+    repo: https://github.com/aushlya95/alpha.lambdax.san.git
     clone: no
   register: git_tags
 
