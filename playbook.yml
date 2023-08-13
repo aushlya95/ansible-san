@@ -1,0 +1,8 @@
+---
+- name: Deploy application
+  hosts: dev  # or test, stage, prod
+  become: yes
+
+  roles:
+    - common
+    - app
