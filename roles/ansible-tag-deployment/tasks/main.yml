@@ -1,0 +1,35 @@
+---
+- name: Deploy application
+  hosts: dev  # Default host, can be overridden conditionally
+  
+
+  vars:
+    git_tag: "{{ lookup('env', 'TAG_TO_DEPLOY') | default('') }}"
+
+  tasks:
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: "dev"
+      when: git_tag.endswith('-alpha')
+
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: "stage"
+      when: git_tag.endswith('-playground')
+
+    - name: Display deployment environment
+      debug:
+        var: deployment_environment
+
+  pre_tasks:
+    - name: Validate deployment environment
+      fail:
+        msg: "Invalid deployment environment: {{ deployment_environment }}"
+      when: deployment_environment not in ['dev', 'stage']
+
+  
+  post_tasks:
+    - name: Run playbook for the determined environment
+      include_role:
+        name: "{{ deployment_environment }}"
+      when: deployment_environment in ['dev', 'stage']
