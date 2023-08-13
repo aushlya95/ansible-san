@@ -1,10 +1,16 @@
 ---
 - name: Deploy application
-  hosts: dev  # Default host, can be overridden conditionally
-  
-
-  vars:
-    git_tag: "{{ lookup('env', 'TAG_TO_DEPLOY') | default('') }}"
+  hosts: all
+  gather_facts: false
+  vars_prompt:
+    - name: git_tag
+      prompt: "Enter the Git tag to deploy"
+      private: no
+      default: ""
+    - name: app_repo
+      prompt: "Enter the application repository URL"
+      private: no
+      default: "https://github.com/aushlya95/alpha.lambdax.san.git"
 
   tasks:
     - name: Determine deployment environment
@@ -21,15 +27,20 @@
       debug:
         var: deployment_environment
 
-  pre_tasks:
-    - name: Validate deployment environment
-      fail:
-        msg: "Invalid deployment environment: {{ deployment_environment }}"
-      when: deployment_environment not in ['dev', 'stage']
+- name: Clone application repository and deploy
+  hosts: "{{ deployment_environment }}"
+  become: yes
 
-  
-  post_tasks:
-    - name: Run playbook for the determined environment
-      include_role:
-        name: "{{ deployment_environment }}"
-      when: deployment_environment in ['dev', 'stage']
+  tasks:
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo }}"
+        dest: /path/to/application
+        version: "{{ git_tag }}"
+      register: clone_result
+
+    - name: Display clone result
+      debug:
+        var: clone_result
+
+    # Additional deployment tasks for your application
