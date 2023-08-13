@@ -1,5 +1,7 @@
 ---
 - name: Hostname | Setting up hostname
   become: True
-  hostname:
-    name: "{{ hostname_fqdn_full }}"
+  tasks:
+    name: "get the hostname of the servers "
+    command: hostname
+    register: hostname_register
