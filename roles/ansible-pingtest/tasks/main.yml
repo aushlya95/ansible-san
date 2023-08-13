@@ -1,7 +1,5 @@
 ---
 - name: hostname checker
-  hosts: alpha:playground  # Specify your target hosts here
-  gather_facts: yes
   tasks:
     - name: Get Hostname
       command: hostname
