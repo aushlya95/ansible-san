@@ -1,11 +1,58 @@
-- name: Debug information
-  debug:
-    msg: "Hostname task is about to be executed."
+---
+- name: Deploy application
+  hosts: localhost  # Use localhost as there's no specific target needed for this task
+  gather_facts: false
 
-- name: Get hostname
-  command: hostname
-  register: hostname_result
+  tasks:
+    - name: Get the environment and server name from inventory
+      set_fact:
+        environment_mapping: "{{ inventory | map(attribute='inventory_hostname') | list }}"
+    
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: >-
+          {{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}
 
-- name: Display hostname
-  debug:
-    var: hostname_result.stdout
+    - name: Get the server hostname based on deployment environment
+      set_fact:
+        server_hostname: "{{ environment_mapping[0] if deployment_environment == 'alpha' else environment_mapping[1] }}"
+    
+    - name: Display server hostname
+      debug:
+        var: server_hostname
+
+    - name: Copy deployment script to remote server
+      copy:
+        content: "{{ lookup('file', 'deploy_script.sh') }}"
+        dest: /tmp/deploy_script.sh
+        mode: '0755'
+
+    - name: Run deployment script on remote server
+      command: /tmp/deploy_script.sh
+      args:
+        chdir: /tmp
+      register: deployment_result
+      ignore_errors: yes  # Ignore errors if the script returns a non-zero exit code
+
+    - name: Display deployment result
+      debug:
+        var: deployment_result
+
+- name: Clone application repository and deploy
+  hosts: "{{ server_hostname }}"
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo }}"   # Use the application repository URL
+        dest: /tmp/app_repo      # Specify the destination directory
+        version: "{{ git_tag }}" # Use the Git tag value
+      register: clone_result
+
+    - name: Display clone result
+      debug:
+        var: clone_result
+
+    # Additional deployment tasks for your application
