@@ -1,9 +1,10 @@
 ---
-- name: Hostname | Setting up hostname
-  become: true
+- name: Get Hostname
+  hosts: all # Specify your target hosts here
+  become: yes
   tasks:
     - name: Get the hostname of the servers
-      shell: hostname
+      command: hostname
       register: hostname_register
 
     - name: Display Hostname
