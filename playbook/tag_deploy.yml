@@ -1,18 +1,11 @@
----
-- name: Deploy application
-  hosts: all
-  gather_facts: false
+- name: Debug information
+  debug:
+    msg: "Hostname task is about to be executed."
 
-  tasks:
-    - name: Determine deployment environment
-      set_fact:
-        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
+- name: Get hostname
+  command: hostname
+  register: hostname_result
 
-    - name: Display deployment environment
-      debug:
-        var: deployment_environment
-
-- name: Run the ansible-tag-deployment role
-  hosts: "{{ deployment_environment }}"
-  roles:
-    - ansible-tag-deployment
+- name: Display hostname
+  debug:
+    var: hostname_result.stdout
