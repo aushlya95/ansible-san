@@ -1,12 +1,11 @@
 ---
-- name: Handle Git Tags and Retrieve Hostnames
-  hosts: alpha:playgroun
-  gather_facts: no
+- name: Get Hostname
+  hosts: alpha:playground  # Specify your target hosts here
+  gather_facts: yes
   tasks:
     - name: Get Hostname
       command: hostname
       register: hostname_result
-      when: selected_tag is defined
 
     - name: Display Hostname
       debug:
