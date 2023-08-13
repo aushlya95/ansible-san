@@ -31,6 +31,8 @@
   hosts: "{{ deployment_environment }}"
   become: yes
 
+  roles:
+    - ansible-tag-deployment
   tasks:
     - name: Clone application repository
       git:
