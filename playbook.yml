@@ -1,8 +1,6 @@
 ---
 - name: Deploy application
-  hosts: dev  # or test, stage, prod
-  become: yes
-  
+  hosts: dev  # or test, stage, prod  
 
   roles:
     - ansible-pingtest
