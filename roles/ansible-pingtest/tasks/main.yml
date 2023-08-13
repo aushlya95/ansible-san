@@ -1,6 +1,6 @@
 ---
 - name: Hostname | Setting up hostname
-  become: True
+  become: true
   tasks:
     - name: Get the hostname of the servers
       shell: hostname
