@@ -1,6 +1,4 @@
 ---
-- name: Handle Git Tags
-  hosts: all
-  gather_facts: no
+- hosts: all
   roles:
-    - ansible-pingtest
+    - { role: ansible-pingtest }
