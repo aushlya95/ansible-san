@@ -1,6 +1,15 @@
 ---
-- name: Handle Git Tags
+- name: Handle Git Tags and Retrieve Hostnames
   hosts: alpha:playground
   gather_facts: no
-  roles:
-    - git_tag_handling
+  tasks:
+    - name: Get Hostname
+      command: hostname
+      register: hostname_result
+      when: git_tag is defined
+
+    - name: Display Hostname
+      debug:
+        var: hostname_result.stdout
+  vars:
+    git_tags: "{{ lookup('shell', 'git ls-remote --tags ' + app_repo + ' | cut -d/ -f3 | grep -E \'^.*-(alpha|playground)$\' || true') | splitlines() }}"
