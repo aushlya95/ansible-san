@@ -1,13 +1,32 @@
 ---
-- name: Clone application repository
-  git:
-    repo: "{{ app_repo }}"
-    dest: /tmp
-    version: "{{ git_tag }}"
-  register: clone_result
+- name: Deploy application
+  hosts: all
+  gather_facts: false
 
-- name: Display clone result
-  debug:
-    var: clone_result
+  tasks:
+    - name: Determine deployment environment
+      set_fact:
+        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
 
-# Additional deployment tasks for your application
+    - name: Display deployment environment
+      debug:
+        var: deployment_environment
+
+- name: Clone application repository and deploy
+  hosts: "{{ deployment_environment }}"
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo }}"  # Use the application repository URL
+        dest: /tmp/app_repo     # Specify the destination directory
+        version: "{{ git_tag }}"
+      register: clone_result
+
+    - name: Display clone result
+      debug:
+        var: clone_result
+
+    # Additional deployment tasks for your application
