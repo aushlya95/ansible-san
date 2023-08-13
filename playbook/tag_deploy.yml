@@ -1,11 +1,7 @@
-- name: Debug information
-  debug:
-    msg: "Hostname task is about to be executed."
+---
+- name: Deploy application
+  hosts: all # or test, stage, prod  
 
-- name: Get hostname
-  command: hostname
-  register: hostname_result
-
-- name: Display hostname
-  debug:
-    var: hostname_result.stdout
+  roles:
+    - ansible-pingtest
+    
