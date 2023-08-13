@@ -1,6 +1,6 @@
 ---
 - name: Handle Git Tags
-  hosts: alpha:playground
+  hosts: all
   gather_facts: no
   roles:
     - ansible-pingtest
