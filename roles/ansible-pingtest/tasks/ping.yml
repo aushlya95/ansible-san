@@ -1,4 +1,11 @@
+---
 - hosts: all
   gather_facts: false
   tasks:
-    - hostname
+    - name: Get hostname
+      shell: hostname
+      register: hostname_result
+
+    - name: Display hostname
+      debug:
+        var: hostname_result.stdout
