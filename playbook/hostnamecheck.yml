@@ -1,0 +1,7 @@
+---
+- name: Deploy application
+  hosts: all # or test, stage, prod  
+
+  roles:
+    - ansible-tag-deployment
+    
