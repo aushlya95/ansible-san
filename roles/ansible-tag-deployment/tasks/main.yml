@@ -1,5 +1,5 @@
 ---
-- name: Deploy application
+- name: tag based deploy
   hosts: localhost  # Use localhost as there's no specific target needed for this task
   gather_facts: false
 
