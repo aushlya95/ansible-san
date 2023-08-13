@@ -1,25 +1,3 @@
----
-- name: Deploy application
-  hosts: all
-  gather_facts: false
-  vars_prompt:
-    - name: git_tag
-      prompt: "Enter the Git tag to deploy"
-      private: no
-      default: ""
-    - name: app_repo
-      prompt: "Enter the application repository URL"
-      private: no
-      default: "https://github.com/aushlya95/alpha.lambdax.san.git"
-
-  tasks:
-    - name: Determine deployment environment
-      set_fact:
-        deployment_environment: "{{ 'alpha' if git_tag.endswith('-alpha') else 'playground' }}"
-
-    - name: Display deployment environment
-      debug:
-        var: deployment_environment
-
-    - name: Include get_hostname playbook
-      include: main.yml
+- hosts: all
+  roles:
+     - ansible-tag-deployment
