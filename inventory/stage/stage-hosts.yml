@@ -1,2 +1,2 @@
 [stage]
-23.23.93.68
+dev-host-1 ansible_host=23.23.93.68 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
