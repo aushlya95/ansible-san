@@ -1,4 +1,4 @@
 ---
-- hosts: alpha:playground
+- hosts: all
   roles:
     - ansible-tag-based
