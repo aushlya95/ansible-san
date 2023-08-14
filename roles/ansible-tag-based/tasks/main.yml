@@ -1,8 +1,18 @@
 ---
-- name: Get the hostname of the servers
-  command: hostname
-  register: hostname_register
+- name: Get Git Tags
+  git:
+    repo: your_git_repository_url_here
+    version: "{{ ansible_date_time.date }}"
+  register: git_tags
 
-- name: Display Hostname
+- name: Filter Alpha Hostnames
   debug:
-    var: hostname_register.stdout
+    var: item
+  loop: "{{ ansible_play_hosts_all }}"
+  when: "'-alpha' in item and ('-alpha' in git_tags.repo_version or '-playground' in git_tags.repo_version)"
+
+- name: Filter Playground Hostnames
+  debug:
+    var: item
+  loop: "{{ ansible_play_hosts_all }}"
+  when: "'-playground' in item and ('-playground' in git_tags.repo_version or '-alpha' in git_tags.repo_version)"
