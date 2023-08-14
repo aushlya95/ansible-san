@@ -13,4 +13,4 @@
 - name: Display Hostname
   debug:
     var: hostname_result.stdout
-  when: hostname_result is defined and hostname_result.rc == 0
+  when: hostname_result is defined
