@@ -1,10 +1,16 @@
 ---
-- name: Get Git Tags
-  shell: git ls-remote --tags "{{ app_repo }}"
-  register: git_tags
+- hosts: all
+  tasks:
+    - name: Get Git Tags
+      shell: git ls-remote --tags "{{ app_repo }}"
+      register: git_tags
 
-- name: Filter Hostnames
-  debug:
-    var: item
-  loop: "{{ ansible_play_hosts_all }}"
-  when: ("{{ git_tag }}-playground" in git_tags.stdout and '-playground' in item) or ("{{ git_tag }}-alpha" in git_tags.stdout and '-alpha' in item)
+    - name: Execute Hostname Command
+      command: hostname
+      register: hostname_result
+      when: "'-{{ git_tag }}' in git_tags.stdout and '-{{ git_tag }}' in inventory_hostname"
+
+    - name: Display Hostname
+      debug:
+        var: hostname_result.stdout
+      when: hostname_result is defined and hostname_result.rc == 0
