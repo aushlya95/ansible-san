@@ -1,16 +1,16 @@
 ---
-- name: Get Git Tags
-  shell: git ls-remote --tags "{{ app_repo }}"
-  register: git_tags
+- hosts: all
+  tasks:
+    - name: Get Git Tags
+      shell: git ls-remote --tags "{{ app_repo }}"
+      register: git_tags
 
-- name: Execute Hostname Command
-  command: hostname
-  register: hostname_result
-  when:
-    - "'-{{ git_tag }}' in git_tags.stdout"
-    - "'-{{ git_tag }}' in inventory_hostname"
+    - name: Execute Hostname Command
+      command: hostname
+      register: hostname_result
+      when: "'-{{ git_tag }}' in git_tags.stdout and '-{{ git_tag }}' in inventory_hostname"
 
-- name: Display Hostname
-  debug:
-    var: hostname_result.stdout
-  when: hostname_result is defined and hostname_result.stdout is defined
+    - name: Display Hostname
+      debug:
+        var: hostname_result.stdout
+      when: hostname_result is defined
