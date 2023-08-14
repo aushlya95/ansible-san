@@ -1,16 +1,16 @@
 ---
 - name: Get Git Tags
-  command: git ls-remote --tags https://github.com/aushlya95/alpha.lambdax.san.git
+  shell: git ls-remote --tags "{{ app_repo }}"
   register: git_tags
 
 - name: Filter Alpha Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-alpha' in item and ('-alpha' in git_tags.stdout or '-playground' in git_tags.stdout)"
+  when: "'-alpha' in item and ('{{ git_tag }}' in git_tags.stdout or '-playground' in git_tags.stdout)"
 
 - name: Filter Playground Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-playground' in item and ('-playground' in git_tags.stdout or '-alpha' in git_tags.stdout)"
+  when: "'-playground' in item and ('{{ git_tag }}' in git_tags.stdout or '-alpha' in git_tags.stdout)"
