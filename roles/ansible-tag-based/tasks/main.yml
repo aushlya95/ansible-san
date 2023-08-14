@@ -6,7 +6,9 @@
 - name: Execute Hostname Command
   command: hostname
   register: hostname_result
-  when: "'-{{ git_tag }}' in git_tags.stdout and '-{{ git_tag }}' in inventory_hostname"
+  when:
+    - "'-{{ git_tag }}' in git_tags.stdout"
+    - "'-{{ git_tag }}' in inventory_hostname"
 
 - name: Display Hostname
   debug:
