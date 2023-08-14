@@ -7,10 +7,10 @@
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-alpha' in item and (git_tag in git_tags.stdout or '-playground' in git_tags.stdout)"
+  when: "'-alpha' in item and ('-{{ git_tag }}' in git_tags.stdout or '-playground' in git_tags.stdout)"
 
 - name: Filter Playground Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-playground' in item and (git_tag in git_tags.stdout or '-alpha' in git_tags.stdout)"
+  when: "'-playground' in item and ('-{{ git_tag }}' in git_tags.stdout or '-alpha' in git_tags.stdout)"
