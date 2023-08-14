@@ -1,14 +1,57 @@
 ---
-- name: Get Git Tags
-  shell: git ls-remote --tags "{{ app_repo }}"
-  register: git_tags
- 
-- name: Execute Hostname Command
-  command: hostname
-  register: hostname_result
-  when: "'-{{ git_tag }}' in git_tags.stdout and '-{{ git_tag }}' in inventory_hostname"
+- name: Get the tag value from the parameter
+  set_fact:
+    tag_param: "{{ lookup('env', 'TAG_TO_DEPLOY') }}"
 
-- name: Display Hostname
+- name: Extract prefix and suffix from the tag
+  set_fact:
+    tag_prefix: "{{ tag_param.split('-')[:-1] | join('-') }}"
+    tag_suffix: "{{ tag_param.split('-')[-1] }}"
+
+- name: Load inventory hostnames
+  include_vars:
+    file: inventory/hosts.ini
+
+- name: Find matching environment and server settings
+  set_fact:
+    environment: "{{ item.value.environment }}"
+    server: "{{ item.value.server }}"
+  when: tag_suffix == item.key
+  loop: "{{ hostvars | dict2items }}"
+  loop_control:
+    loop_var: item
+
+- name: Deploy if matching environment found
   debug:
-    var: hostname_result.stdout
-  when: hostname_result is defined
+    msg: "Deploying tag '{{ tag_param }}' to environment '{{ environment }}'..."
+  when: environment is defined
+
+- name: SSH into the server and perform the deployment
+  delegate_to: "{{ server }}"
+  vars:
+    tag_param: "{{ tag_param }}"
+  shell: |
+    rm -rf /tmp/*
+
+    cd /tmp/
+    git clone https://github.com/aushlya95/alpha.lambdax.san.git
+    cd alpha.lambdax.san
+    git fetch --tags
+
+    # Copy files from new version
+    git checkout tags/{{ tag_param }} -b {{ tag_param }}
+    cp -r * /tmp/
+    sudo -i
+    docker images
+    docker ps -a
+    echo "Deploying on server '{{ server }}'..."
+
+- name: Display deployment completion
+  debug:
+    msg: "Deployment completed."
+  when: environment is defined
+
+- name: Display no matching environment
+  debug:
+    msg: "No matching environment found for tag pattern '{{ tag_param }}'."
+  when: environment is not defined
