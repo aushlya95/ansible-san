@@ -1,18 +1,18 @@
 ---
 - name: Get Git Tags
-  git:
-    repo: your_git_repository_url_here
-    version: "{{ ansible_date_time.date }}"
+  shell: git tag
+  args:
+    chdir: https://github.com/aushlya95/alpha.lambdax.san.git
   register: git_tags
 
 - name: Filter Alpha Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-alpha' in item and ('-alpha' in git_tags.repo_version or '-playground' in git_tags.repo_version)"
+  when: "'-alpha' in item and ('-alpha' in git_tags.stdout or '-playground' in git_tags.stdout)"
 
 - name: Filter Playground Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-playground' in item and ('-playground' in git_tags.repo_version or '-alpha' in git_tags.repo_version)"
+  when: "'-playground' in item and ('-playground' in git_tags.stdout or '-alpha' in git_tags.stdout)"
