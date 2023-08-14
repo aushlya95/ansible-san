@@ -3,14 +3,8 @@
   shell: git ls-remote --tags "{{ app_repo }}"
   register: git_tags
 
-- name: Filter Alpha Hostnames
+- name: Filter Hostnames
   debug:
     var: item
   loop: "{{ ansible_play_hosts_all }}"
-  when: "'-alpha' in item and (git_tag | regex_search('-' + git_tag) or '-playground' in git_tags.stdout)"
-
-- name: Filter Playground Hostnames
-  debug:
-    var: item
-  loop: "{{ ansible_play_hosts_all }}"
-  when: "'-playground' in item and (git_tag | regex_search('-' + git_tag) or '-alpha' in git_tags.stdout)"
+  when: ("{{ git_tag }}-playground" in git_tags.stdout and '-playground' in item) or ("{{ git_tag }}-alpha" in git_tags.stdout and '-alpha' in item)
