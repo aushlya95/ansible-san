@@ -1,8 +1,6 @@
 ---
 - name: Get Git Tags
-  shell: git tag
-  args:
-    chdir: https://github.com/aushlya95/alpha.lambdax.san.git
+  command: git ls-remote --tags https://github.com/aushlya95/alpha.lambdax.san.git
   register: git_tags
 
 - name: Filter Alpha Hostnames
